@@ -1,0 +1,43 @@
+.page {
+  &__container {
+    padding: 50px 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+  }
+}
+.stopwatch {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  &__display {
+    text-align: center;
+    font-size: 100px;
+  }
+
+  // .stopwatch__buttons
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__button {
+    padding: 10px 25px;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    @media (any-hover: hover) {
+      &:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        transform: translateY(-3px);
+      }
+    }
+    font-size: 18px;
+    font-weight: bold;
+    background-color: greenyellow;
+  }
+}
