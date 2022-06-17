@@ -1,10 +1,5 @@
-interface CountState {
-  sec: number;
-  min: number;
-}
-
-export class State implements CountState {
-  constructor(public sec: number, public min: number) {
+export class State {
+  constructor(private sec: number, private min: number) {
     this.min = min;
     this.sec = sec;
   }
@@ -16,5 +11,9 @@ export class State implements CountState {
   setZero() {
     this.sec = 0;
     this.min = 0;
+  }
+
+  addOneSec() {
+    return this.sec++;
   }
 }

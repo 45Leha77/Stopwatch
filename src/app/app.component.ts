@@ -15,7 +15,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { State } from './models/State.interface';
+import { State } from './State.interface';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +36,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   resetClick$!: Observable<PointerEvent>;
 
   counting$!: Subscription;
-  secInterval$ = interval(1000);
+  setInterval$ = interval(1000);
 
   observeButtons() {
     this.startClick$ = fromEvent<PointerEvent>(
@@ -61,7 +61,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.observeButtons();
 
     this.counting$ = this.startClick$.subscribe(() => {
-      this.secInterval$
+      this.setInterval$
         .pipe(
           takeUntil(
             merge(
@@ -93,7 +93,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
           )
         )
         .subscribe(() => {
-          this.state.sec++;
+          this.state.addOneSec();
         });
     });
   }
