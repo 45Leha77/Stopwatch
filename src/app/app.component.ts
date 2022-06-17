@@ -35,7 +35,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   waitClick$!: Observable<PointerEvent>;
   resetClick$!: Observable<PointerEvent>;
 
-  counting$!: Subscription;
+  startBtnSubscription$!: Subscription;
   setInterval$ = interval(1000);
 
   observeButtons() {
@@ -57,48 +57,58 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     );
   }
 
+  stopCounting$() {
+    return this.stopClick$.pipe(
+      tap(() => {
+        this.state.setZero();
+      })
+    );
+  }
+
+  waitCounting$() {
+    return this.waitClick$.pipe(
+      mergeMap(() => {
+        return this.waitClick$.pipe(takeUntil(interval(500)));
+      }),
+      tap(
+        this.stopClick$.pipe(
+          tap(() => {
+            this.state.setZero();
+          })
+        )
+      )
+    );
+  }
+
+  resetCounting$() {
+    return this.resetClick$.pipe(
+      tap(() => {
+        this.state.setZero();
+      })
+    );
+  }
+
+  counting$() {
+    return this.setInterval$.pipe(
+      takeUntil(merge(this.stopCounting$(), this.waitCounting$())),
+      tap(this.resetCounting$())
+    );
+  }
+
   ngAfterViewInit(): void {
     this.observeButtons();
-
-    this.counting$ = this.startClick$.subscribe(() => {
-      this.setInterval$
-        .pipe(
-          takeUntil(
-            merge(
-              this.stopClick$.pipe(
-                tap(() => {
-                  this.state.setZero();
-                })
-              ),
-              this.waitClick$.pipe(
-                mergeMap(() => {
-                  return this.waitClick$.pipe(takeUntil(interval(500)));
-                }),
-                tap(
-                  this.stopClick$.pipe(
-                    tap(() => {
-                      this.state.setZero();
-                    })
-                  )
-                )
-              )
-            )
-          ),
-          tap(
-            this.resetClick$.pipe(
-              tap(() => {
-                this.state.setZero();
-              })
-            )
-          )
-        )
-        .subscribe(() => {
-          this.state.addOneSec();
-        });
-    });
+    this.startBtnSubscription$ = this.startClick$
+      .pipe(
+        mergeMap(() => {
+          return this.counting$();
+        })
+      )
+      .subscribe(() => {
+        this.state.addOneSec();
+      });
   }
 
   ngOnDestroy(): void {
-    this.counting$.unsubscribe();
+    this.startBtnSubscription$.unsubscribe();
   }
 }
